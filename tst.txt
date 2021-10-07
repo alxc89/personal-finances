@@ -1,0 +1,49 @@
+import { MigrationInterface, QueryRunner, Table } from "typeorm";
+
+export class financialmoviment1633484408007 implements MigrationInterface {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.createTable(
+      new Table({
+        name: "financialmoviment",
+        columns: [
+          {
+            name: "id",
+            type: "uuid",
+            isPrimary: true,
+            generationStrategy: "uuid",
+            default: "uuid_generated_v4()",
+          },
+          {
+            name: "movimenttype",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "description",
+            type: "varchar",
+            isNullable: true,
+          },
+          {
+            name: "amount",
+            type: "numeric(8,2)",
+            isNullable: true,
+          },
+          {
+            name: "date",
+            type: "Date",
+            isNullable: true,
+          },
+          {
+            name: "created_at",
+            type: "timestamp",
+            default: "now()",
+          },
+        ],
+      })
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.dropTable("financialmoviment");
+  }
+}
