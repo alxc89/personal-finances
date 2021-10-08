@@ -1,12 +1,12 @@
 import Router, { NextFunction, Request, Response } from "express";
-import { FinancialMovimentController } from "../controller/FinancialMoviment";
+import { FinancialMovementController } from "../controller/FinancialMoviment";
 const router = Router();
 
-const financialMovimentController = new FinancialMovimentController();
+const financialMovementController = new FinancialMovementController();
 
-router.get("/financialmoviment", financialMovimentController.findAll);
-router.post("/financialmoviment", financialMovimentController.create);
-router.delete("/financialmoviment/:id", financialMovimentController.delete);
-router.put("/financialmoviment/:id", financialMovimentController.update);
+router.get("/financial_movement", financialMovementController.findAll);
+router.post("/financial_movement", financialMovementController.create);
+router.delete("/financial_movement/:id", financialMovementController.delete);
+router.put("/financial_movement/:id", financialMovementController.update);
 
 export { router };

@@ -1,6 +1,6 @@
 import { EntityRepository, Repository } from "typeorm";
-import { FinancialMoviment } from "../models/FinancialMoviment";
+import { FinancialMovement } from "../models/FinancialMovement";
 
-@EntityRepository(FinancialMoviment)
-class FinancialRepositorys extends Repository<FinancialMoviment> {}
+@EntityRepository(FinancialMovement)
+class FinancialRepositorys extends Repository<FinancialMovement> {}
 export { FinancialRepositorys };

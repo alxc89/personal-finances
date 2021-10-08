@@ -1,15 +1,42 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
-import { FinancialMoviment } from "../models/FinancialMoviment";
+import { FinancialMovement } from "../models/FinancialMovement";
 import * as yup from "yup";
 
-class FinancialMovimentController {
+class FinancialMovementController {
   async findAll(req: Request, res: Response) {
     try {
-      const financialMovimentRepository = getRepository(FinancialMoviment);
-      const financialmoviment = await financialMovimentRepository.find();
+      const financialMovementRepository = getRepository(FinancialMovement);
+      const financialmovements = await financialMovementRepository.find();
 
-      return res.json(financialmoviment);
+      const entradas = financialmovements.reduce(
+        (accumulator, financialMovement) => {
+          if (financialMovement.movimenttype === "Entrada") {
+            accumulator = accumulator + Number(financialMovement.amount);
+          }
+          return accumulator;
+        },
+        0
+      );
+
+      const saidas = financialmovements.reduce(
+        (accumulator, financialmovement) =>
+          financialmovement.movimenttype === "Saída"
+            ? accumulator + financialmovement.amount
+            : accumulator,
+        0
+      );
+
+      const movements = {
+        financialmovements,
+        totals: {
+          entradas,
+          saidas,
+          total: entradas - saidas,
+        },
+      };
+
+      return res.json(movements);
     } catch (e) {
       return res.json(e);
     }
@@ -17,7 +44,7 @@ class FinancialMovimentController {
 
   async create(req: Request, res: Response) {
     const { movimenttype, description, amount, date } = req.body;
-    const financialMovimentRepository = getRepository(FinancialMoviment);
+    const financialMovementRepository = getRepository(FinancialMovement);
     const schema = yup.object().shape({
       movimenttype: yup.string().required(),
       description: yup.string().required(),
@@ -31,28 +58,28 @@ class FinancialMovimentController {
       return res.json(errors.message);
     }
 
-    const createMoviment = financialMovimentRepository.create({
+    const createMovement = financialMovementRepository.create({
       movimenttype,
       description,
       amount,
       date,
     });
 
-    await financialMovimentRepository.save(createMoviment);
-    return res.json(createMoviment);
+    await financialMovementRepository.save(createMovement);
+    return res.json(createMovement);
   }
 
   async delete(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const financialMovimentRepository = getRepository(FinancialMoviment);
-      const movimentId = await financialMovimentRepository.findOne(id);
+      const financialMovementRepository = getRepository(FinancialMovement);
+      const movementId = await financialMovementRepository.findOne(id);
 
-      if (movimentId == undefined) {
+      if (movementId == undefined) {
         return res.status(400).json("Not found to delete");
       }
 
-      await financialMovimentRepository.delete(id);
+      await financialMovementRepository.delete(id);
 
       return res.json("Financial moviment deleted");
     } catch (error) {
@@ -63,23 +90,23 @@ class FinancialMovimentController {
   async update(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const financialMovimentRepository = getRepository(FinancialMoviment);
-      const movimentId = await financialMovimentRepository.findOne(id);
+      const financialMovementRepository = getRepository(FinancialMovement);
+      const movementId = await financialMovementRepository.findOne(id);
 
-      if (movimentId == undefined) {
+      if (movementId == undefined) {
         return res.json("Not found for change");
       }
 
-      const updateMoviment = await financialMovimentRepository.update(
+      const updateMovement = await financialMovementRepository.update(
         id,
         req.body
       );
 
-      return res.json(updateMoviment);
+      return res.json(updateMovement);
     } catch (error) {
       return res.json(error);
     }
   }
 }
 
-export { FinancialMovimentController };
+export { FinancialMovementController };
