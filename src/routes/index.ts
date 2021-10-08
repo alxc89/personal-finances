@@ -1,5 +1,5 @@
 import Router, { NextFunction, Request, Response } from "express";
-import { FinancialMovementController } from "../controller/FinancialMoviment";
+import { FinancialMovementController } from "../controller/FinancialMovimentController";
 const router = Router();
 
 const financialMovementController = new FinancialMovementController();
