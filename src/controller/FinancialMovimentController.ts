@@ -7,11 +7,11 @@ class FinancialMovementController {
   async findAll(req: Request, res: Response) {
     try {
       const financialMovementRepository = getRepository(FinancialMovement);
-      const financialmovements = await financialMovementRepository.find();
+      const financialMovements = await financialMovementRepository.find();
 
-      const entradas = financialmovements.reduce(
+      const entradas = financialMovements.reduce(
         (accumulator, financialMovement) => {
-          if (financialMovement.movimenttype === "Entrada") {
+          if (financialMovement.moviment_type === "Entrada") {
             accumulator = accumulator + Number(financialMovement.amount);
           }
           return accumulator;
@@ -19,16 +19,16 @@ class FinancialMovementController {
         0
       );
 
-      const saidas = financialmovements.reduce(
-        (accumulator, financialmovement) =>
-          financialmovement.movimenttype === "Saída"
-            ? accumulator + financialmovement.amount
+      const saidas = financialMovements.reduce(
+        (accumulator, financialMovement) =>
+          financialMovement.moviment_type === "Saída"
+            ? accumulator + Number(financialMovement.amount)
             : accumulator,
         0
       );
 
       const movements = {
-        financialmovements,
+        financialMovements,
         totals: {
           entradas,
           saidas,
@@ -43,10 +43,10 @@ class FinancialMovementController {
   }
 
   async create(req: Request, res: Response) {
-    const { movimenttype, description, amount, date } = req.body;
+    const { moviment_type, description, amount, date } = req.body;
     const financialMovementRepository = getRepository(FinancialMovement);
     const schema = yup.object().shape({
-      movimenttype: yup.string().required(),
+      moviment_type: yup.string().required(),
       description: yup.string().required(),
       amount: yup.number().required(),
       date: yup.date().required(),
@@ -54,19 +54,19 @@ class FinancialMovementController {
 
     try {
       await schema.validate(req.body, { abortEarly: false });
+
+      const createMovement = financialMovementRepository.create({
+        moviment_type,
+        description,
+        amount,
+        date,
+      });
+
+      await financialMovementRepository.save(createMovement);
+      return res.json(createMovement);
     } catch (errors: any) {
       return res.json(errors.message);
     }
-
-    const createMovement = financialMovementRepository.create({
-      movimenttype,
-      description,
-      amount,
-      date,
-    });
-
-    await financialMovementRepository.save(createMovement);
-    return res.json(createMovement);
   }
 
   async delete(req: Request, res: Response) {

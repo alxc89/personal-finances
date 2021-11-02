@@ -12,7 +12,7 @@ export class financialmoviment1633484408007 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: "movimenttype",
+            name: "moviment_type",
             type: "varchar",
             isNullable: false,
           },
@@ -23,7 +23,9 @@ export class financialmoviment1633484408007 implements MigrationInterface {
           },
           {
             name: "amount",
-            type: "numeric(8,2)",
+            type: "decimal",
+            precision: 10,
+            scale: 2,
             isNullable: false,
           },
           {

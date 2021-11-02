@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from "typeorm";
 
@@ -12,12 +11,12 @@ class FinancialMovement {
   id: string;
 
   @Column()
-  movimenttype: string;
+  moviment_type: string;
 
   @Column()
   description: string;
 
-  @Column()
+  @Column("decimal")
   amount: number;
 
   @Column()
